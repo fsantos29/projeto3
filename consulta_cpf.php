@@ -8,6 +8,17 @@ if (!isset($_SESSION['nome'])) {
 $nome = $_SESSION['nome'];
 $email_representante = $_SESSION['email'];
 
+$db = new PDO("mysql:host=localhost;dbname=exercicio", "usuario", "senha123");
+
+$lista_cidades = [];
+
+$query = $db->prepare("SELECT * FROM cidade");
+if ($query->execute()) {
+    if ($query->rowCount() > 0) {
+        $lista_cidades = $query->fetchAll(PDO::FETCH_OBJ);
+    }
+}
+
 $cpf = '';
 $nomeCli = '';
 $sobrenome = '';
@@ -19,7 +30,6 @@ $cep = '';
 $tipo_op = 'c'; //cadastro
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $db = new PDO("mysql:host=localhost;dbname=exercicio", "usuario", "senha123");
 
     if (isset($_POST['tipo_op'])) { //cadastro ou edição
         if ($_POST['tipo_op'] == 'c') {
@@ -184,7 +194,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="row">
                         <div class="col-md-5 mb-3">
                             <label for="cidade">Cidade</label>
-                            <input type="text" class="form-control" name="cidade" placeholder="" value="<?= $cidade ?>">
+                            <select class="form-select" name="cidade" aria-label="Selecione a cidade" required>
+                                <?php
+                                if ($cidade == '')
+                                    echo '<option selected>Selecione uma cidade...</option>';
+                                foreach ($lista_cidades as $c) {
+                                    echo ("<option value='" . $c->cidade . "' " . (($c->cidade == $cidade) ? 'selected' : '') . ">" . $c->cidade . "</option>");
+                                }
+                                ?>
+                            </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="estado">Estado</label>

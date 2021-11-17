@@ -17,6 +17,21 @@
 CREATE DATABASE IF NOT EXISTS `exercicio` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `exercicio`;
 
+-- Copiando estrutura para tabela exercicio.cidade
+CREATE TABLE IF NOT EXISTS `cidade` (
+  `cidade` varchar(50) NOT NULL,
+  `estado` varchar(50) NOT NULL,
+  UNIQUE KEY `cidade` (`cidade`,`estado`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Copiando dados para a tabela exercicio.cidade: ~3 rows (aproximadamente)
+/*!40000 ALTER TABLE `cidade` DISABLE KEYS */;
+INSERT INTO `cidade` (`cidade`, `estado`) VALUES
+	('cidade 1', 'estado 1'),
+	('cidade 2', 'estado 2'),
+	('cidade 3', 'estado 3');
+/*!40000 ALTER TABLE `cidade` ENABLE KEYS */;
+
 -- Copiando estrutura para tabela exercicio.cliente
 CREATE TABLE IF NOT EXISTS `cliente` (
   `cpf` varchar(14) NOT NULL,
@@ -30,10 +45,12 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `usr_representante` varchar(50) NOT NULL,
   UNIQUE KEY `cpf` (`cpf`,`usr_representante`),
   KEY `fk_representante` (`usr_representante`),
+  KEY `fk_cidade` (`cidade`),
+  CONSTRAINT `fk_cidade` FOREIGN KEY (`cidade`) REFERENCES `cidade` (`cidade`),
   CONSTRAINT `fk_representante` FOREIGN KEY (`usr_representante`) REFERENCES `usuario` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Copiando dados para a tabela exercicio.cliente: ~7 rows (aproximadamente)
+-- Copiando dados para a tabela exercicio.cliente: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
 INSERT INTO `cliente` (`cpf`, `nome`, `sobrenome`, `email`, `endereco`, `cidade`, `estado`, `cep`, `usr_representante`) VALUES
 	('111.111.111-11', 'João Pinto', 'Limão', 'joao@email.com', 'rua 1', 'cidade 1', 'estado 1', '11.111-111', 'admin@email.com'),
