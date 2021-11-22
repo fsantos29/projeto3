@@ -117,13 +117,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body class="bg-light">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">Bem vindo <?php echo $nome ?></a>
 
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal">Bem vindo <?php echo $nome ?></h5>
-        <nav class="my-2 my-md-0 mr-md-3">
-            <a class="p-2 text-dark" href="consulta_cpf.php">Consultar Cliente</a>
-        </nav>
-        <a class="btn btn-outline-primary" href="login.php">Sair do Sistema</a>
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="consulta_cpf.php" class="nav-link px-2 link-secondary">Consultar Cliente</a></li>
+            </ul>
+
+            <div class="col-md-3 text-end">
+                <a class="btn btn-outline-primary" href="login.php">Sair do Sistema</a>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -215,8 +220,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <hr class="mb-4">
-
-                    <button class="btn btn-<?= ($tipo_op == 'c') ? 'success' : 'primary' ?> btn-lg btn-block" type="submit"><?= ($tipo_op == 'c') ? 'Cadastrar' : 'Editar' ?> Cliente</button>
+                    <div class="row  justify-content-md-center">
+                        <div class="col-md-4 mb-4 text-center">
+                            <button class="btn btn-<?= ($tipo_op == 'c') ? 'success' : 'primary' ?> btn-lg btn-block" type="submit"><?= ($tipo_op == 'c') ? 'Cadastrar' : 'Editar' ?> Cliente</button>
+                        </div>
+                    </div>
 
                 </form>
             </div>
