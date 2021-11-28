@@ -10,6 +10,27 @@ $email_representante = $_SESSION['email'];
 
 $db = new PDO("mysql:host=localhost;dbname=exercicio", "usuario", "senha123");
 
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET['tipo_op'])) { //exclusao, cadastro ou edição
+
+        $operacao = '';
+
+        if ($_GET['tipo_op'] == 'd') {
+            $operacao = 'Exclurir';
+            $query = $db->prepare("DELETE FROM `cliente` WHERE `cpf` = ?");
+            $query->bindParam(1, $_GET['cpf']);
+
+            if ($query->execute()) {
+                $_SESSION['msg_alteracao'] = "  <div class='alert alert-success' role='alert'>
+                                                        Sucesso ao " . $operacao . " cliente!
+                                                    </div>";
+                header('location:consulta_cpf.php');
+                die;
+            }
+        }
+    }
+}
+
 $lista_cidades = [];
 
 $query = $db->prepare("SELECT * FROM cidade");
@@ -32,14 +53,19 @@ $tipo_op = 'c'; //cadastro
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST['tipo_op'])) { //cadastro ou edição
-        if ($_POST['tipo_op'] == 'c') {
 
+        $operacao = '';
+
+        if ($_POST['tipo_op'] == 'c') {
+            $operacao = 'Cadastrar';
             $query = $db->prepare("INSERT INTO `cliente` (`cpf`, `nome`, `sobrenome`, `email`,
                                          `endereco`, `cidade`, `estado`, `cep`, `usr_representante`) 
                                     VALUES (?,?,?,?,?,?,?,?,?)");
         } else if ($_POST['tipo_op'] == 'e') {
+            $operacao = 'Editar';
             $query = $db->prepare("UPDATE `cliente` SET `cpf`=?, `nome`=?, `sobrenome`=?, `email`=?, `endereco`=?, `cidade`=?, `estado`=?, `cep`=?, `usr_representante`=? WHERE  `cpf`=? AND `usr_representante`=?");
         }
+
         $query->bindParam(1, $_POST['cpf']);
         $query->bindParam(2, $_POST['nome']);
         $query->bindParam(3, $_POST['sobrenome']);
@@ -49,20 +75,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $query->bindParam(7, $_POST['estado']);
         $query->bindParam(8, $_POST['cep']);
         $query->bindParam(9, $email_representante);
+
         if ($_POST['tipo_op'] == 'e') {
             $query->bindParam(10, $_POST['cpf']);
             $query->bindParam(11, $email_representante);
         }
+
         if ($query->execute()) {
             $_SESSION['msg_alteracao'] = "  <div class='alert alert-success' role='alert'>
-                                                    Cliente " . (($_POST['tipo_op'] == 'c') ? "cadastrado" : "editado") . " com sucesso!
+                                                    Sucesso ao " . $operacao . " cliente!
                                                 </div>";
             header('location:consulta_cpf.php');
             die;
         }
 
         $_SESSION['msg_alteracao'] = "  <div class='alert alert-danger' role='alert'>
-                                            Erro ao " . (($_POST['tipo_op'] == 'c') ? "cadastrar" : "editar") . " cliente!
+                                            Erro ao " . $operacao . " cliente!
                                         </div>";
 
         header('location:consulta_cpf.php');
@@ -224,6 +252,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-md-4 mb-4 text-center">
                             <button class="btn btn-<?= ($tipo_op == 'c') ? 'success' : 'primary' ?> btn-lg btn-block" type="submit"><?= ($tipo_op == 'c') ? 'Cadastrar' : 'Editar' ?> Cliente</button>
                         </div>
+                        <?php if ($tipo_op == 'e') { ?>
+                            <div class="col-md-4 mb-4 text-center">
+                                <a class="btn btn-danger btn-lg btn-block" href="<?= 'consulta_cpf.php?tipo_op=d&cpf=' . $cpf ?>">Excluir Cliente</a>
+                            </div>
+                        <?php } ?>
                     </div>
 
                 </form>
